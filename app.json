@@ -1,0 +1,7 @@
+{
+  "name": "Documents_Saver",
+  "displayName": "Documents_Saver",
+  "expo": {
+    "plugins": ["expo-image-picker"]
+  }
+}
