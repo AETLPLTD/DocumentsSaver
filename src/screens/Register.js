@@ -8,23 +8,37 @@ import {useTheme} from '@react-navigation/native';
 
 const Register = props => {
   const [inputs, setInputs] = React.useState({
+    email: '',
     phone: '',
     password: '',
     confirmPassword: '',
   });
   const [errors, setErrors] = React.useState({});
   const [feilds, setFields] = React.useState({
+    email: 0,
     phone: 0,
     password: 0,
     confirmPassword: 0,
   });
+  const validateEmail = () => {
+    Keyboard.dismiss();
+    if (!inputs.email) {
+      handleError('Please enter email id', 'email');
+      return false;
+    } else if (
+      !inputs.email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/)
+    ) {
+      handleError('Please enter valid email id', 'email');
+      return false;
+    }
+    return true;
+  };
   const validatePhone = () => {
     Keyboard.dismiss();
     if (!inputs.phone) {
-      handleError('Please input phone number', 'phone');
-      return false;
+      return true;
     } else if (!inputs.phone.match(/^[6-9]\d{9}$/)) {
-      handleError('Please input valid phone number', 'phone');
+      handleError('Please enter valid phone number', 'phone');
       return false;
     }
     return true;
@@ -63,11 +77,12 @@ const Register = props => {
   const validate = () => {
     Keyboard.dismiss();
     let valid = true;
+    let validEmail = validateEmail();
     let validPhone = validatePhone();
     let validPassword = validatePassword();
     let validCPassword = validateCPassword();
 
-    if (!(validPhone && validPassword && validCPassword)) {
+    if (!(validEmail && validPhone && validPassword && validCPassword)) {
       valid = false;
     }
 
@@ -93,6 +108,17 @@ const Register = props => {
         <Text style={styles(colors).head}>Register your account</Text>
         <View style={styles(colors).fieldView1}>
           <Field
+            placeholder="Email Address"
+            onChangeText={text => handleOnChange(text, 'email')}
+            error={errors.email}
+            field={feilds.email}
+            onFocus={() => {
+              handleError(null, 'email');
+            }}
+            validateField={validateEmail}
+          />
+
+          <Field
             placeholder="Enter mobile number"
             keyboardType="numeric"
             onChangeText={text => handleOnChange(text, 'phone')}
@@ -103,9 +129,6 @@ const Register = props => {
             }}
             validateField={validatePhone}
           />
-        </View>
-
-        <View style={styles(colors).fieldView2}>
           <Field
             placeholder="Create Password"
             password={true}
@@ -148,7 +171,8 @@ const Register = props => {
                     ? '#D3D3D3'
                     : 'white',
               },
-            ]}></View>
+            ]}
+          />
           <View
             style={[
               styles(colors).indicator,
@@ -164,7 +188,8 @@ const Register = props => {
                     ? '#D3D3D3'
                     : 'white',
               },
-            ]}></View>
+            ]}
+          />
           <View
             style={[
               styles(colors).indicator,
@@ -178,7 +203,8 @@ const Register = props => {
                     ? '#D3D3D3'
                     : 'white',
               },
-            ]}></View>
+            ]}
+          />
           <View
             style={[
               styles(colors).indicator,
@@ -190,18 +216,19 @@ const Register = props => {
                     ? '#D3D3D3'
                     : 'white',
               },
-            ]}></View>
+            ]}
+          />
           <View>
             <Text style={styles(colors).strength}>
-              {inputs.password == ''
+              {inputs.password === ''
                 ? ''
-                : passwordStrength(inputs.password).value == 'Too weak'
+                : passwordStrength(inputs.password).value === 'Too weak'
                 ? 'TOO WEAK'
-                : passwordStrength(inputs.password).value == 'Weak'
+                : passwordStrength(inputs.password).value === 'Weak'
                 ? 'WEAK'
-                : passwordStrength(inputs.password).value == 'Medium'
+                : passwordStrength(inputs.password).value === 'Medium'
                 ? 'GOOD'
-                : passwordStrength(inputs.password).value == 'Strong'
+                : passwordStrength(inputs.password).value === 'Strong'
                 ? 'STRONG'
                 : ''}
             </Text>
@@ -224,16 +251,22 @@ const Register = props => {
 const styles = colors =>
   StyleSheet.create({
     container: {
-      marginVertical: '10%',
       width: '100%',
       alignItems: 'center',
+      justifyContent: 'center',
     },
     logo: {
-      width: '35%',
-      height: '35%',
+      width: '40%',
+      height: '30%',
       resizeMode: 'contain',
     },
-    head: {fontSize: 25, color: colors.text, marginBottom: 20},
+    head: {
+      fontSize: 28,
+      color: colors.text,
+      marginBottom: 20,
+      marginTop: -20,
+      fontWeight: '600',
+    },
     fieldView1: {marginBottom: 20, width: '100%', alignItems: 'center'},
     fieldView2: {marginBottom: 20, width: '100%', alignItems: 'center'},
     indicatorView: {
@@ -255,7 +288,7 @@ const styles = colors =>
       fontWeight: 'bold',
       marginLeft: 8,
     },
-    btn: {marginTop: 50, width: 80},
+    btn: {marginTop: 30, width: 80},
   });
 
 export default Register;

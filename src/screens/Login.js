@@ -6,16 +6,18 @@ import Field from '../components/Field';
 import {useTheme} from '@react-navigation/native';
 
 const Login = props => {
-  const [inputs, setInputs] = React.useState({phone: '', password: ''});
+  const [inputs, setInputs] = React.useState({email: '', password: ''});
   const [errors, setErrors] = React.useState({});
-  const [feilds, setFields] = React.useState({phone: 0, password: 0});
-  const validatePhone = () => {
+  const [feilds, setFields] = React.useState({email: 0, password: 0});
+  const validateEmail = () => {
     Keyboard.dismiss();
-    if (!inputs.phone) {
-      handleError('Please input phone number', 'phone');
+    if (!inputs.email) {
+      handleError('Please input email id', 'email');
       return false;
-    } else if (!inputs.phone.match(/^[6-9]\d{9}$/)) {
-      handleError('Please input valid phone number', 'phone');
+    } else if (
+      !inputs.email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/)
+    ) {
+      handleError('Please input valid email id', 'email');
       return false;
     }
     return true;
@@ -45,9 +47,9 @@ const Login = props => {
   const validate = () => {
     Keyboard.dismiss();
     let valid = true;
-    let validPhone = validatePhone();
+    let validEmail = validateEmail();
     let validPassword = validatePassword();
-    if (!(validPhone && validPassword)) {
+    if (!(validEmail && validPassword)) {
       valid = false;
     }
     if (valid) {
@@ -69,17 +71,16 @@ const Login = props => {
           source={require('../../assets/logo.png')}
           style={styles(colors).logo}
         />
-        <Text style={styles(colors).heading}>BUDGETALIZER</Text>
+        <Text style={styles(colors).heading}>Document Scanner & Saver</Text>
         <Field
-          placeholder="Phone Number"
-          keyboardType="numeric"
-          onChangeText={text => handleOnChange(text, 'phone')}
-          error={errors.phone}
-          field={feilds.phone}
+          placeholder="Email Address"
+          onChangeText={text => handleOnChange(text, 'email')}
+          error={errors.email}
+          field={feilds.email}
           onFocus={() => {
-            handleError(null, 'phone');
+            handleError(null, 'email');
           }}
-          validateField={validatePhone}
+          validateField={validateEmail}
         />
         <Field
           placeholder="Password"
@@ -128,16 +129,23 @@ const Login = props => {
 const styles = colors =>
   StyleSheet.create({
     container: {
-      marginVertical: 100,
       width: '100%',
       alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 50,
     },
     logo: {
-      width: '30%',
+      marginTop: -40,
+      width: '40%',
       height: '30%',
       resizeMode: 'contain',
     },
-    heading: {fontSize: 38, color: colors.text, marginBottom: 30},
+    heading: {
+      fontSize: 28,
+      color: colors.text,
+      marginBottom: 30,
+      fontWeight: '600',
+    },
     view1: {alignItems: 'flex-end', width: '78%', marginTop: 10},
     forget: {
       color: colors.text,

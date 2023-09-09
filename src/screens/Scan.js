@@ -13,6 +13,7 @@ import * as ImagePicker from 'expo-image-picker';
 import {Camera} from 'expo-camera';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useTheme} from '@react-navigation/native';
+import axios from 'axios';
 
 function Scan(props) {
   let capturedimage = props.route.params?.capturedImage;
@@ -106,11 +107,26 @@ function Scan(props) {
                   style={styles(colors).previewImage}
                 />
                 <TouchableOpacity
-                  onPress={() => {
+                  onPress={async () => {
                     setCapturedImages([...capturedImages, capturedImage]);
                     setCapturedImage(null);
                     setImageNames([...imageNames, imageName]);
                     setImagename(null);
+                    const payload = {
+                      key: 'image',
+                      value: capturedImage,
+                    };
+                    try {
+                      const response = await axios.post(
+                        'http://localhost:8085/api/v1/images',
+                        payload,
+                      );
+                      if (response.status === 201)
+                        console.log('Image sent successfully');
+                      else console.log('Error sending image');
+                    } catch (error) {
+                      console.log(error);
+                    }
                   }}>
                   <Icon name="check" color={'#adadad'} size={30} />
                 </TouchableOpacity>
